@@ -26,6 +26,16 @@ public class Robot extends TimedRobot {
 
 
   Victor driveMotorLeftOne, driveMotorLeftTwo, driveMotorRightOne, driveMotorRightTwo, servojank;
+  Joystick astronautOne, astronautTwo;
+
+  //joystick constants
+  int leftXAxis = 0;
+  int leftYAxis = 1;
+  int leftTrigger = 2;
+  int rightTrigger = 3;
+  int rightXAxis = 4;
+  int rightYAxis = 5; 
+  double deadzone = 0.05;
   
 
   @Override
@@ -35,6 +45,8 @@ public class Robot extends TimedRobot {
     driveMotorRightOne = new Victor(0);
     driveMotorRightTwo = new Victor(1);
     servojank = new Victor(4);
+    astronautOne = new Joystick(0);
+    astronautTwo = new Joystick(1);
   }
 
   @Override
@@ -47,11 +59,25 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+   
   }
 
   @Override
   public void teleopPeriodic() {
-    servojank.set(1);
+    double leftMotorMove = astronautOne.getRawAxis(leftYAxis);
+    double rightMotorMove = astronautOne.getRawAxis(rightYAxis);
+
+    if(Math.abs(leftMotorMove) <= deadzone)
+    {
+      leftMotorMove = 0D;
+    }
+
+    if(Math.abs(rightMotorMove) <= deadzone)
+    {
+      rightMotorMove = 0D;
+    }
+
+    motorSet(leftMotorMove, rightMotorMove);
   }
 
   @Override
@@ -60,6 +86,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
+  }
+
+  private void motorSet(double leftVal, double rightVal)
+  {
+    driveMotorLeftOne.set(leftVal * -1);
+    driveMotorLeftTwo.set(leftVal * -1);
+    driveMotorRightOne.set(rightVal);
+    driveMotorRightTwo.set(rightVal);
   }
 
 }

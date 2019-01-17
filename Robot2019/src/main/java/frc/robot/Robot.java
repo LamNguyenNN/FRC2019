@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.networktables.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -25,8 +26,10 @@ public class Robot extends TimedRobot {
    */
 
 
-  Victor driveMotorLeftOne, driveMotorLeftTwo, driveMotorRightOne, driveMotorRightTwo, servojank;
+  Victor driveMotorLeftOne, driveMotorLeftTwo, driveMotorRightOne, driveMotorRightTwo, led;
   Joystick astronautOne, astronautTwo;
+  NetworkTable table;
+  NetworkTableEntry direction;
 
   //joystick constants
   int leftXAxis = 0;
@@ -44,9 +47,12 @@ public class Robot extends TimedRobot {
     driveMotorLeftTwo = new Victor(8);
     driveMotorRightOne = new Victor(0);
     driveMotorRightTwo = new Victor(1);
-    servojank = new Victor(4);
+    led = new Victor(9);
     astronautOne = new Joystick(0);
     astronautTwo = new Joystick(1);
+    //table = NetworkTableInstance.getDefault().getTable("Smart Dashboard");
+    table = NetworkTableInstance.getDefault().getTable("FMSInfo");
+    direction = table.getEntry("dir");
   }
 
   @Override
@@ -55,6 +61,23 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    direction = table.getEntry("dir");
+
+    if(direction.equals("l"))
+    {
+      motorSet(0.25, 0.4);
+    }
+    else if(direction.getValue().equals("r"))
+    {
+      motorSet(0.4, 0.25);
+    }
+    else if(direction.getValue().equals("f"))
+    {
+      motorSet(0.4, 0.4);
+    }
+
+    //some real sound like shit down here
+
   }
 
   @Override
@@ -64,6 +87,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    led.set(1);
     double leftMotorMove = astronautOne.getRawAxis(leftYAxis);
     double rightMotorMove = astronautOne.getRawAxis(rightYAxis);
 
@@ -78,6 +102,7 @@ public class Robot extends TimedRobot {
     }
 
     motorSet(leftMotorMove, rightMotorMove);
+
   }
 
   @Override

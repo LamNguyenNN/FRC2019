@@ -30,6 +30,9 @@ public class Robot extends TimedRobot {
   Joystick astronautOne, astronautTwo;
   NetworkTable table;
   NetworkTableEntry direction;
+  NetworkTableValue left, right, forward;
+  AnalogInput ai;
+  Ultrasonic ultra;
 
   //joystick constants
   int leftXAxis = 0;
@@ -39,6 +42,7 @@ public class Robot extends TimedRobot {
   int rightXAxis = 4;
   int rightYAxis = 5; 
   double deadzone = 0.05;
+  double maxSpeed = 0.6;
   
 
   @Override
@@ -51,8 +55,17 @@ public class Robot extends TimedRobot {
     astronautOne = new Joystick(0);
     astronautTwo = new Joystick(1);
     //table = NetworkTableInstance.getDefault().getTable("Smart Dashboard");
-    table = NetworkTableInstance.getDefault().getTable("FMSInfo");
+    //table = NetworkTableInstance.getDefault().getTable("SmartDashboard");
+    table = NetworkTableInstance.getDefault().getTable("SmartDashboard");
     direction = table.getEntry("dir");
+    table.getEntry("left").setValue(new String("l"));
+    left = table.getEntry("left").getValue();
+    table.getEntry("right").setValue(new String("r"));
+    right = table.getEntry("right").getValue();
+    table.getEntry("forward").setValue(new String("f"));
+    forward = table.getEntry("forward").getValue();
+    ai = new AnalogInput(0);
+    ultra = new Ultrasonic(0,1);
   }
 
   @Override
@@ -61,19 +74,25 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+
     direction = table.getEntry("dir");
 
-    if(direction.equals("l"))
+    System.out.println(direction.getValue());
+
+    if(direction.getValue().equals(left))
     {
-      motorSet(0.25, 0.4);
+      System.out.println("l");
+      motorSet(0, -0.15);
     }
-    else if(direction.getValue().equals("r"))
+    else if(direction.getValue().equals(right))
     {
-      motorSet(0.4, 0.25);
+      System.out.println("r");
+      motorSet(-0.15, 0);
     }
-    else if(direction.getValue().equals("f"))
+    else if(direction.getValue().equals(forward))
     {
-      motorSet(0.4, 0.4);
+      System.out.println("f");
+      motorSet(-0.15, -0.15);
     }
 
     //some real sound like shit down here
@@ -101,8 +120,14 @@ public class Robot extends TimedRobot {
       rightMotorMove = 0D;
     }
 
-    motorSet(leftMotorMove, rightMotorMove);
+    motorSet(leftMotorMove * maxSpeed, rightMotorMove * maxSpeed);
 
+    /*double rawVolt = ai.getVoltage();
+    rawVolt = (rawVolt * 50) ;
+    System.out.println(rawVolt);*/
+
+    double range = ultra.getRangeInches();
+    System.out.println(range);
   }
 
   @Override

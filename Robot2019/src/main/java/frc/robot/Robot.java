@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
   NetworkTableValue left, right, forward;
   AnalogInput ai;
   Ultrasonic ultra;
+  Encoder enc;
 
   //joystick constants
   int leftXAxis = 0;
@@ -66,6 +67,13 @@ public class Robot extends TimedRobot {
     forward = table.getEntry("forward").getValue();
     ai = new AnalogInput(0);
     ultra = new Ultrasonic(0,1);
+    enc = new Encoder(1, 2, false, Encoder.EncodingType.k4X);
+    enc.reset();
+    enc.setMaxPeriod(0.1D);
+    enc.setMinRate(5D);
+    enc.setDistancePerPulse(0.0048D);
+    //enc.setReverseDirection(true);
+
   }
 
   @Override
@@ -101,6 +109,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    enc.reset();
    
   }
 
@@ -109,6 +118,9 @@ public class Robot extends TimedRobot {
     led.set(1);
     double leftMotorMove = astronautOne.getRawAxis(leftYAxis);
     double rightMotorMove = astronautOne.getRawAxis(rightYAxis);
+
+    double theBigDist = enc.getDistance();
+    System.out.println(theBigDist);
 
     if(Math.abs(leftMotorMove) <= deadzone)
     {
@@ -126,8 +138,6 @@ public class Robot extends TimedRobot {
     rawVolt = (rawVolt * 50) ;
     System.out.println(rawVolt);*/
 
-    double range = ultra.getRangeInches();
-    System.out.println(range);
   }
 
   @Override

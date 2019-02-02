@@ -29,10 +29,11 @@ public class Robot extends TimedRobot {
   Victor driveMotorLeftOne, driveMotorLeftTwo, driveMotorRightOne, driveMotorRightTwo, led;
   Joystick astronautOne, astronautTwo;
   NetworkTable table;
-  NetworkTableEntry direction;
+  NetworkTableEntry direction, camMode;
   NetworkTableValue left, right, forward;
-  AnalogInput ai;
+  AnalogInput ultraSonic;
   Encoder enc;
+  
 
   //joystick constants
   int leftXAxis = 0;
@@ -43,7 +44,9 @@ public class Robot extends TimedRobot {
   int rightYAxis = 5; 
   double deadzone = 0.05;
   double maxSpeed = 0.6;
-  
+  int buttonA = 1;
+  boolean buttonAPress = false;
+  boolean buttonAToggle = true;
 
   @Override
   public void robotInit() {
@@ -64,13 +67,17 @@ public class Robot extends TimedRobot {
     right = table.getEntry("right").getValue();
     table.getEntry("forward").setValue(new String("f"));
     forward = table.getEntry("forward").getValue();
-    ai = new AnalogInput(0);
-    enc = new Encoder(1, 2, false, Encoder.EncodingType.k4X);
-    enc.setMaxPeriod(0.1D);
-    enc.setMinRate(10D);
-    enc.setDistancePerPulse(0.0048D);
-    enc.setReverseDirection(true);
+    ultraSonic = new AnalogInput(0);
+    enc = new Encoder(0, 1, true, Encoder.EncodingType.k2X);
+    enc.reset();
+    enc.setMaxPeriod(.5);
+    enc.setMinRate(0.1);
+    enc.setDistancePerPulse(0.0048);
+    enc.setSamplesToAverage(50);
+   // enc.setReverseDirection(true);
 
+   camMode = table.getEntry("cam");
+   
   }
 
   @Override
@@ -106,17 +113,29 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    enc.reset();
   }
 
   @Override
   public void teleopPeriodic() {
-    led.set(1);
+    led.set(0);
     double leftMotorMove = astronautOne.getRawAxis(leftYAxis);
     double rightMotorMove = astronautOne.getRawAxis(rightYAxis);
 
-    double theBigDist = enc.getRaw();
-    System.out.println(theBigDist);
+    //double theBigDist = enc.get();
+    double raw = enc.getRaw();
+    double distance = enc.getDistance();
+    double period = enc.getPeriod();
+    double rate = enc.getRate();
+    boolean direction = enc.getDirection();
+    boolean stopped = enc.getStopped();
+    System.out.println("Raw: " + raw);
+    System.out.println("Distance: " + distance);
+    System.out.println("Period: " + period);
+    System.out.println("Rate: " + rate);
+    System.out.println("Direction: " + direction);
+    System.out.println("stopped: " + stopped);
+    //System.out.println(ultraSonic.getVoltage());
+
 
     if(Math.abs(leftMotorMove) <= deadzone)
     {
@@ -133,6 +152,21 @@ public class Robot extends TimedRobot {
     /*double rawVolt = ai.getVoltage();
     rawVolt = (rawVolt * 50) ;
     System.out.println(rawVolt);*/
+
+    
+
+    if(astronautOne.getRawButton(buttonA) && buttonAToggle) {
+      buttonAToggle = false;
+      if(buttonAPress) {
+        buttonAPress = false;
+        camMode.setValue(new String("y"));
+      } else {
+        buttonAPress = true;
+        camMode.setValue(new String("n"));
+      }
+    } else if (!astronautOne.getRawButton(buttonA)) {
+      buttonAToggle = true;
+    }
 
   }
 

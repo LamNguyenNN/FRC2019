@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import jdk.nashorn.internal.runtime.doubleconv.DtoaBuffer;
 import edu.wpi.first.wpilibj.*;
 
 import javax.lang.model.util.ElementScanner6;
@@ -57,6 +58,8 @@ public class Robot extends TimedRobot {
   int buttonY = 4;
   int buttonX = 3;
   int buttonB = 2;
+  int buttonLeftBumper = 5;
+  int buttonRightBumper = 6;
   boolean buttonXPress = false;
   boolean buttonXToggle = true;
   double limit = 0.025D;
@@ -84,12 +87,16 @@ public class Robot extends TimedRobot {
   //auto delivery
   int tracking;
   boolean dropping;
+  boolean plat;
+  int counter;
 
   @Override
   public void robotInit() {
 
-    tracking = false;
+    tracking = 0;
+    counter = 0;
     dropping = false;
+    plat = false;
 
     driveMotorLeft1 = new Victor(5);
     driveMotorLeft2 = new Victor(6);
@@ -186,8 +193,8 @@ public class Robot extends TimedRobot {
     
     if(astronautOne.getRawButton(buttonX))
     {
-      deliverHatch();
       tracking = 1;
+      deliverHatch();
     }
     else if(astronautOne.getRawButton(buttonB))
     {
@@ -199,9 +206,23 @@ public class Robot extends TimedRobot {
     {
       deliverHatch();
     }
+    else if(plat)
+    {
+      platOpen();
+    }
     else if(dropping)
     {
       backUpBot();
+    }
+
+    if(astronautOne.getRawButton(buttonLeftBumper) && astronautOne.getRawButton(buttonRightBumper))
+    {
+      motorSet(0, 0);
+      slide.set(0);
+      platypus.set(0);
+      tracking = 0;
+      plat = false;
+      dropping = false;
     }
 
     //Camera switch
@@ -319,14 +340,14 @@ public class Robot extends TimedRobot {
     }
     else if(ultraHandlerFront.dist <= 6)
     {
-      if(ultraHandlerSlide.dist >= 18 * tracking)
+      if(ultraHandlerSlide.dist >= 18 * tracking) ///CHANGJFAHJ
       {
         moveSlider(0);
         if(ultraHandlerFront.dist <= 4)
         {
           motorSet(0, 0);
           tracking = 0;
-          dropping = true;
+          plat = true;
         }
         else
         {
@@ -346,14 +367,30 @@ public class Robot extends TimedRobot {
     {
         motorSet(-0.15, -0.15);
     }
-    else if(ultraHandlerSlide.dist >= 16)
+    else if(ultraHandlerSlide.dist >= 10)
     {
+      motorSet(0, 0);
       moveSlider(-0.25);
     }
     else
     {
+      moveSlider(0);
+      platypus.set(0);
       dropping = false;
     }
+  }
+
+  private void platOpen()
+  {
+    counter++;
+    platypus.set(0.5);
+    if(counter >= 50)
+    {
+      counter = 0;
+      dropping = true;
+      plat = false;
+    }
+
   }
 
   private void moveSlider(double value)

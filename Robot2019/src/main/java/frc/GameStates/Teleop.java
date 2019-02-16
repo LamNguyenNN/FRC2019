@@ -11,17 +11,22 @@ public class Teleop{
 	
 	private Astronaut driver1, driver2;
 	private DriveTrain driveTrain;
-	private LinearSlide slide;
+	private LinearSlider slider;
 	private VisionTracker visionTracker;
-	private UltrasonicSensor ultrasonic
+	private UltrasonicSensor ultraFront, ultraSlide
+	private Platypus platypus;
+	private int timer;
 	
-	public Teleop (Astronaut driver1, Astronaut driver2, DriveTrain driveTrain, LinearSlide linearSlide, VisionTracker visionTracker, UltrasonicSensor ultrasonic) {
+	public Teleop (Astronaut driver1, Astronaut driver2, DriveTrain driveTrain, LinearSlider linearSlider, Platypus platypus, VisionTracker visionTracker, UltrasonicSensor ultraFront, UltrasonicSensor ultraSlide) {
 		this.driver1 = driver1;
 		this.driver2 = driver2;
 		this.driveTrain = driveTrain;
-		this.linearSlide = linearSlide;
+		this.linearSlider = linearSlider;
+		this.platypus = platypus
 		this.visionTracker = visionTracker;
-		this.ultrasonic = ultrasonic;
+		this.ultraFront = ultraFront;
+		this.ultraSlide = ultraSlide;
+		this.timer = 0;
 	}
 	
 	public void drive() {
@@ -30,6 +35,37 @@ public class Teleop{
 		driveTrain.drive(leftMotorMove, rightMotorMove);
 	}
 	
+	public void deliverHatch() {
+		if (ultraFront.getDist() > 6) {
+			visionTracker.moveByVision();
+		} else {
+			if (ultraSlide.getDist() > 18 * slider.getSlideLevel()) {
+				slider.stop()
+				if(ultraFront.getDist() <= 4) {
+					driveTrain.stop();
+		          platypus.closePlatypus();
+		          resetBot();
+		        } else {
+		        	driveTrain.drive(0.15, 0.15);
+		        }
+			} else {
+				slider.slide(0.15)
+			}
+		}
+	}
+	
+	public void resetBot() {
+		if((ultraFront.getDist() <= 6) {
+			driveTrain.drive(-0.15, -0.15);
+		} else if (ultraSlide.getDist() > 10) {
+			driveTrain.stop();
+			slider.slide(-0.25);
+		} else {
+			driveTrain.drive(0);
+			slider.slide(0);
+		}
+		platypus.openPlatypus();
+	}
 	
 	
 }

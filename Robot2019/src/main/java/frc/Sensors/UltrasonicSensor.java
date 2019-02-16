@@ -4,17 +4,17 @@ public class UltrasonicHandler implements Runnable {
 
     public Ultrasonic ultra;//, ultraSlide;
     public double dist;
-    public boolean running;
+    public boolean enabled;
 
-    public UltrasonicHandler(Ultrasonic ultra) {
-        this.ultra = ultra;
-        this.running = true;
-        this.ultra.setEnabled(true);
+    public UltrasonicHandler(int ping, int echo) {
+        this.ultra = new Ultrasonic(ping, echo)
+        this.enabled = false;;
+        this.ultra.setEnabled(false);
     }
 
     @Override
     public void run() {
-        while(running) {
+        while(enabled) {
             ultra.ping();
             try
             {
@@ -27,4 +27,14 @@ public class UltrasonicHandler implements Runnable {
             this.dist = ultra.getRangeInches();
         }
     }
+    
+    public double getDist() {
+    	return this.dist;
+    }
+    
+    public void setEnabled (boolean enabled) {
+    	this.enabled = enabled;
+    	this.ultra.setEnabled(enabled);
+    }
+    
 }

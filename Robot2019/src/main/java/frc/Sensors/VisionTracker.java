@@ -27,6 +27,8 @@ public class VisionTracker {
 	    {
 	      System.out.println("f");
 	      driveTrain.drive(0.15, 0.15);
+	    } else {
+	    	driveTrain.stop();
 	    }
 	}
 	

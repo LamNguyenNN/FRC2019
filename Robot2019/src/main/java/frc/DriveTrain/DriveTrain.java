@@ -19,4 +19,11 @@ public class DriveTrain {
 		driveMotorRight2.set(rightMotorMove * maxSpeed);
 	}
 	
+	public void stop() {
+		driveMotorLeft1.set(0);
+		driveMotorLeft2.set(0);
+		driveMotorRight1.set(0);
+		driveMotorRight2.set(0);
+	}
+	
 }

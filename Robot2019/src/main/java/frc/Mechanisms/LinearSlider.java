@@ -1,15 +1,15 @@
 package frc.Mechanisms
 import edu.wpi.first.wpilibj.*;
 
-public class LinearSlide {
+public class LinearSlider {
 	
-	private Victor slide;
-	public int slideLevel;
+	private Victor slider;
+	private int slideLevel;
 	private int limitedSlide;
 	private double limit;
 	
-	public LinearSlide(int port) {
-		slide = new Victor(port);
+	public LinearSlider(int port) {
+		slider = new Victor(port);
 		slideLevel = 0;
 		limitedSlide = 0;
 		limit = 0.025;
@@ -25,10 +25,20 @@ public class LinearSlide {
 	    }
 
 	    limitedSlide += change;
-	    slide.set(limitedSlide);
+	    slider.set(limitedSlide);
 	}
 	
+	public void setSlideLevel(int level) {
+		this.slideLevel = level;
+	}
 	
+	public int getSlideLevel() {
+		return this.slideLevel
+	}
+	
+	public void stop() {
+		slider.set(0);
+	}
 	
 	
 	

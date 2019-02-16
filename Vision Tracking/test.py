@@ -20,8 +20,8 @@ ip = '10.30.6.2'
 
 NetworkTables.initialize(server=ip)
 
-lower_green = np.array([0, 90, 90]) # 0, 90, 90
-upper_green = np.array([86, 255, 255]) #
+lower_green = np.array([0, 255, 110]) #137 240 135 - HSV, 0,90,90 - RGB
+upper_green = np.array([80, 255, 200]) #143 255 148 - HSV, 86,255,255 - RGB
 
 camWidth = 320
 camHeight = 240
@@ -37,8 +37,8 @@ cam2 = UsbCamera("cam2", 1)
 cam1.setResolution(camWidth, camHeight)
 cam2.setResolution(camWidth, camHeight)
 
-cam1.setExposureManual(10)
-cam2.setExposureManual(10)
+cam1.setExposureManual(8)
+cam2.setExposureManual(8)
 
 cvSink = cs.getVideo(camera = cam1)
 
@@ -57,6 +57,7 @@ NetworkTables.addConnectionListener(connectionListener, immediateNotify = True)
 sd.addEntryListener(listener, key="cam")
 sd.putString('dir', 'working')
 print(sd.getString(key="cam", defaultValue = ""))
+font = cv2.FONT_HERSHEY_SIMPLEX
 
 while(True):
 	camMode = sd.getString(key="cam", defaultValue = "y")
@@ -88,8 +89,11 @@ while(True):
 			sec_largest_contour = c
 			sec_largest_area = area
 		
-	#print(largest_area)
-	#print(sec_largest_area)
+	print('largest ', largest_area)
+	print('sec largest', sec_largest_area)
+
+	cv2.putText(frame, str(largest_area), (45, 100), font, 1, (255,255,255), 2, cv2.LINE_AA)
+	cv2.putText(frame, str(sec_largest_area), (45, 150), font, 1, (255,255,255), 2, cv2.LINE_AA)
 
 	if(largest_area > 0 and sec_largest_area > 0):
 		M1 = cv2.moments(largest_contour)
@@ -102,17 +106,38 @@ while(True):
 		
 		if abs(center_average_x - center_x) > margin:
 			if center_average_x < center_x:
-				sd.putString('dir', 'r')
-				print('r')
-			elif center_average_x > center_x:
 				sd.putString('dir', 'l')
 				print('l')
+				cv2.putText(frame, 'l', (275, 50), font, 2, (255,255,255), 2, cv2.LINE_AA)
+			elif center_average_x > center_x:
+				sd.putString('dir', 'r')
+				print('r')
+				cv2.putText(frame, 'r', (275, 50), font, 2, (255,255,255), 2, cv2.LINE_AA)
 		else:
 			sd.putString('dir', 'f')
 			print('f')
+			cv2.putText(frame, 'f', (275, 50), font, 2, (255,255,255), 2, cv2.LINE_AA)
 		
-		cv2.drawContours(frame, [largest_contour], 0, (0, 255, 0), 3)
-		cv2.drawContours(frame, [sec_largest_contour], 0, (0, 255, 0), 3)
+		cv2.drawContours(frame, [largest_contour], 0, (0, 0, 255), 3)
+		cv2.drawContours(frame, [sec_largest_contour], 0, (0, 0 , 255), 3)
+	elif(largest_area > 0 and sec_largest_area == 0):
+		M1 = cv2.moments(largest_contour)
+		center_contour_x = int(M1['m10']/M1['m00'])
+		if abs(center_contour_x - center_x) > margin:
+			if center_contour_x < center_x:
+				sd.putString('dir', 'l')
+				print('l')
+				cv2.putText(frame, 'l', (275, 50), font, 2, (255,255,255), 2, cv2.LINE_AA)
+			elif center_contour_x > center_x:
+				sd.putString('dir', 'r')
+				print('r')
+				cv2.putText(frame, 'r', (275, 50), font, 2, (255,255,255), 2, cv2.LINE_AA)
+		else:
+			sd.putString('dir', 'f')
+			print('f')
+			cv2.putText(frame, 'f', (275, 50), font, 2, (255,255,255), 2, cv2.LINE_AA)
+
+		cv2.drawContours(frame, [largest_contour], 0, (0, 0, 255), 3)
 
 	outputStream.putFrame(frame)
 	

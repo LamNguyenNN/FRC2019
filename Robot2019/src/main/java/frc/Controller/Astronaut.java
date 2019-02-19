@@ -1,9 +1,10 @@
-package frc.Controller
+package frc.Controller;
 import edu.wpi.first.wpilibj.*;
+import java.util.*;
 
 public class Astronaut {
 	
-	private static numControllers = 0;
+	private static int numControllers = 0;
 	private Joystick joystick;
 	
 	final private int buttonA = 1;
@@ -19,6 +20,10 @@ public class Astronaut {
 	final int rightYAxis = 5;
 	final int leftTrigger = 2;
 	final int rightTrigger = 3;
+
+	private List<Boolean> buttonToggleList;
+	public boolean buttonXToggle = false;
+	public boolean buttonXPress = false;
 	
 	public Astronaut(int port) {
 		numControllers++;
@@ -35,7 +40,7 @@ public class Astronaut {
 	
 	public boolean isButtonPressed(String button) {
 		int buttonValue = 0;
-		switch(button.toLowerCase()):
+		switch(button.toLowerCase()) {
 			case "a":
 				buttonValue = 1;
 				break;
@@ -54,6 +59,7 @@ public class Astronaut {
 			case "rb":
 				buttonValue = 6;
 				break;
+		}
 		if(joystick.getRawButton(buttonValue)) {
 			return true;
 		} else {
@@ -61,4 +67,18 @@ public class Astronaut {
 		}
 	}
 	
+	public boolean isButtonXToggled() {
+		if(joystick.getRawButton(3))
+		{
+			buttonXPress = true;
+		}
+		else if (!joystick.getRawButton(3) && buttonXPress)
+		{
+			buttonXPress = false;
+			buttonXToggle = !buttonXToggle;
+		}
+
+		return buttonXToggle;
+	}
+
 }

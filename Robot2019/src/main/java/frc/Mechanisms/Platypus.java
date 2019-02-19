@@ -1,4 +1,4 @@
-package frc.Mechanisms
+package frc.Mechanisms;
 import edu.wpi.first.wpilibj.*;
 
 public class Platypus{
@@ -13,7 +13,7 @@ public class Platypus{
 	public void openPlatypus() {
 		while(timer < 50) {
 			platypus.set(0.5);
-			timer++
+			timer++;
 		}
 		timer = 0;
 		platypus.set(0);
@@ -22,10 +22,15 @@ public class Platypus{
 	public void closePlatypus() {
 		while(timer < 50) {
 			platypus.set(-0.5);
-			timer++
+			timer++;
 		}
 		timer = 0;
 		platypus.set(0);
+	}
+
+	public void set(double value)
+	{
+		platypus.set(value);
 	}
 	
 }

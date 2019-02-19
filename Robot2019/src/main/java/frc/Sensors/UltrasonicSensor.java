@@ -1,15 +1,15 @@
 package frc.Sensors;
 import edu.wpi.first.wpilibj.*;
-public class UltrasonicHandler implements Runnable {
+public class UltrasonicSensor implements Runnable {
 
     public Ultrasonic ultra;//, ultraSlide;
     public double dist;
     public boolean enabled;
 
-    public UltrasonicHandler(int ping, int echo) {
-        this.ultra = new Ultrasonic(ping, echo)
-        this.enabled = false;;
-        this.ultra.setEnabled(false);
+    public UltrasonicSensor(Ultrasonic ultra) {
+        this.ultra = ultra;
+        this.enabled = true;
+        this.ultra.setEnabled(true);
     }
 
     @Override

@@ -1,7 +1,6 @@
-package frc.Sensors
-import main.java.deploy.frc.DriveTrain;
-import main.java.deploy.frc.Network;
-import edu.wpi.first.wpilibj.*;
+package frc.Sensors;
+import frc.DriveTrain.*;
+import frc.Network.*;
 
 public class VisionTracker {
 	
@@ -13,20 +12,20 @@ public class VisionTracker {
 	
 	public void moveByVision() {
 		String direction = RobotNetwork.dirEntry.getString("bad");
-		if(direction.equalsIgnoreCase("l"))
-	    {
-	      System.out.println("l");
-	      driveTrain.drive(0, 0.15);
-	    }
-	    else if(direction.equalsIgnoreCase("r"))
+		if(direction.equalsIgnoreCase("r"))
 	    {
 	      System.out.println("r");
-	      driveTrain.drive(0.15, 0);
+	      driveTrain.drive(0, -0.3);
+	    }
+	    else if(direction.equalsIgnoreCase("l"))
+	    {
+	      System.out.println("l");
+	      driveTrain.drive(-0.3, 0);
 	    }
 	    else if(direction.equalsIgnoreCase("f"))
 	    {
 	      System.out.println("f");
-	      driveTrain.drive(0.15, 0.15);
+	      driveTrain.drive(-0.3, -0.3);
 	    } else {
 	    	driveTrain.stop();
 	    }

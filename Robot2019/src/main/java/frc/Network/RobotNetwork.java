@@ -1,6 +1,7 @@
-package frc.Network
+package frc.Network;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.networktables.*;
 
 public class RobotNetwork {
 	public static NetworkTable table;
@@ -13,7 +14,7 @@ public class RobotNetwork {
 	
 	public static void initNetwork() {
 		table = NetworkTableInstance.getDefault().getTable("SmartDashboard");
-		direction = table.getEntry("dir");
+		dirEntry = table.getEntry("dir");
 		left = table.getEntry("left").getValue();
 		right = table.getEntry("right").getValue();
 		forward = table.getEntry("forward").getValue();

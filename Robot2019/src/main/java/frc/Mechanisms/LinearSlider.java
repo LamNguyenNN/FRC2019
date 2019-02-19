@@ -1,4 +1,4 @@
-package frc.Mechanisms
+package frc.Mechanisms;
 import edu.wpi.first.wpilibj.*;
 
 public class LinearSlider {
@@ -33,13 +33,15 @@ public class LinearSlider {
 	}
 	
 	public int getSlideLevel() {
-		return this.slideLevel
+		return this.slideLevel;
 	}
 	
 	public void stop() {
 		slider.set(0);
 	}
 	
-	
+	public void set(double val) {
+		slider.set(val);
+	}
 	
 }

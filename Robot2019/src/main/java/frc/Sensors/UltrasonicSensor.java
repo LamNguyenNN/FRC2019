@@ -3,18 +3,24 @@ import edu.wpi.first.wpilibj.*;
 public class UltrasonicSensor implements Runnable {
 
     public Ultrasonic ultra;//, ultraSlide;
-    public double dist;
-    public boolean enabled;
+    public double prevDist, dist;
+    public double margin;
+    public boolean running;
 
     public UltrasonicSensor(Ultrasonic ultra) {
         this.ultra = ultra;
-        this.enabled = true;
+        this.running = true;
         this.ultra.setEnabled(true);
+        this.margin = 1;
+        this.ultra.ping();
+        this.prevDist = ultra.getRangeInches();
+
     }
 
     @Override
     public void run() {
-        while(enabled) {
+        while(running) {
+            this.prevDist = this.dist;
             ultra.ping();
             try
             {
@@ -25,16 +31,10 @@ public class UltrasonicSensor implements Runnable {
                 e.printStackTrace();
             }
             this.dist = ultra.getRangeInches();
+            if(Math.abs(this.dist-this.prevDist) > margin) {
+                this.dist = this.prevDist;
+            }
+           // System.out.println(this.dist);
         }
     }
-    
-    public double getDist() {
-    	return this.dist;
-    }
-    
-    public void setEnabled (boolean enabled) {
-    	this.enabled = enabled;
-    	this.ultra.setEnabled(enabled);
-    }
-    
 }
